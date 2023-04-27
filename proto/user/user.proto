@@ -1,0 +1,33 @@
+// define syntax used in proto file
+syntax = "proto3";
+// options used by gRPC golang plugin(not related to gRPC gateway)
+option go_package = "github.com/panco95/grpc-gateway;grpc_gateway";
+
+// well know type by google, gRPC gateway uses HTTP annotation.
+import "google/api/annotations.proto";
+
+package user;
+
+// simple message
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginReply {
+  string token = 1;
+}
+
+// a gRPC service
+service User {
+  // SayHello is a rpc call and a option is defined for it
+  rpc Login (LoginRequest) returns (LoginReply) {
+    // option type is http
+    option (google.api.http) = {
+      // this is url, for RESTfull/JSON api and method
+      // this line means when a HTTP post request comes with "/v1/sayHello" call this rpc method over this service
+      post: "/v1/login"
+      body: "*"
+    };
+  }
+}
